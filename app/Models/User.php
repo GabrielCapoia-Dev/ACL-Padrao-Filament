@@ -107,4 +107,9 @@ class User extends Authenticatable implements FilamentUser
             }
         });
     }
+
+    public function setor()
+    {
+        return $this->belongsTo(Setor::class);
+    }
 }

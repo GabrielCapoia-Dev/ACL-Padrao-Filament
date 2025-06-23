@@ -5,6 +5,10 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Turno;
+use App\Models\RegimeContratual;
+use App\Models\Cargo;
+use App\Models\Servidor;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -15,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // Limpa cache das permissões do Spatie
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Lista de permissões que serão atribuídas à role Admin
+        // Lista de permissões
         $permissionsList = [
             'Acessar Painel',
             'Listar Usuários',
@@ -40,21 +44,17 @@ class DatabaseSeeder extends Seeder
             'Acessar Painel',
         ];
 
-        // Criação (ou recuperação) das permissões
+        // Criação de permissões
         foreach ($permissionsList as $permissionName) {
             Permission::firstOrCreate(['name' => $permissionName]);
         }
 
-        // Criação da rule (role) Admin
+        // Criação de roles
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        
-        // Criação da rule (role) Usuário
-        $accessPainelRule = Role::firstOrCreate(['name' => 'Acessar Painel']);
+        $accessPainelRole = Role::firstOrCreate(['name' => 'Acessar Painel']);
 
-        // Atribui todas as permissões à role Admin
         $adminRole->syncPermissions($permissionsList);
-        
-        $accessPainelRule->syncPermissions($accessPainelPermissions);
+        $accessPainelRole->syncPermissions($accessPainelPermissions);
 
         // Criação do usuário admin
         $adminUser = User::firstOrCreate(
@@ -67,7 +67,74 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Atribui a role Admin ao usuário
         $adminUser->assignRole($adminRole);
+
+        // ========================
+        // Criação de Turnos
+        // ========================
+        $turnos = [
+            'Manhã',
+            'Tarde',
+            'Noite',
+            'Integral',
+        ];
+
+        foreach ($turnos as $turno) {
+            Turno::firstOrCreate(['nome' => $turno]);
+        }
+
+        // ========================
+        // Criação de Regime Contratual
+        // ========================
+        $regimes = [
+            'Estatutário',
+            'C.L.T',
+            'PSS',
+        ];
+
+        $regimeContratualIds = [];
+
+        foreach ($regimes as $regime) {
+            $regimeModel = RegimeContratual::firstOrCreate(['nome' => $regime]);
+            $regimeContratualIds[$regime] = $regimeModel->id;
+        }
+
+        // ========================
+        // Criação de Cargos
+        // ========================
+        $cargos = [
+            'Professor',
+            'Auxiliar Serviços Gerais',
+            'Secretário Escolar',
+        ];
+
+        foreach ($cargos as $cargoNome) {
+            foreach ($regimeContratualIds as $regimeNome => $regimeId) {
+                Cargo::firstOrCreate(
+                    [
+                        'nome' => $cargoNome,
+                        'regime_contratual_id' => $regimeId,
+                    ],
+                    [
+                        'descricao' => "{$cargoNome} - {$regimeNome}",
+                    ]
+                );
+            }
+        }
+
+        // ========================
+        // Criação de X servidores aleatórios
+        // ========================
+        $numeroServidores = 100;
+
+        for ($i = 1; $i <= $numeroServidores; $i++) {
+            Servidor::create([
+                'nome' => fake()->name(),
+                'matricula' => str_pad($i, 4, '0', STR_PAD_LEFT),
+                'email' => fake()->unique()->safeEmail(),
+                'cargo_id' => Cargo::inRandomOrder()->first()->id,
+                'turno_id' => Turno::inRandomOrder()->first()->id,
+            ]);
+        }
     }
 }
