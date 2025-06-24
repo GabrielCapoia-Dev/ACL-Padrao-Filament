@@ -2,58 +2,52 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-class Cargo extends Model
+class Lotacao extends Model
 {
     use HasFactory;
     use Notifiable;
     use HasRoles;
     use LogsActivity;
 
-    protected $table = 'cargos';
+    protected $table = 'lotacoes';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+
     protected $fillable = [
         'nome',
+        'codigo',
         'descricao',
-        'regime_contratual_id',
-        'lotacao_id',
+        'setor_id',
+        'cargo_id',
     ];
+
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly([
                 'nome',
+                'codigo',
                 'descricao',
-                'regime_contratual_id',
-                'lotacao_id',
+                'setor_id',
+                'cargo_id',
             ]);
     }
 
-
-    public function servidores()
+    public function setor()
     {
-        return $this->hasMany(Servidor::class);
+        return $this->belongsTo(Setor::class);
     }
 
-    public function regimeContratual()
+    public function cargo()
     {
-        return $this->belongsTo(RegimeContratual::class, 'regime_contratual_id');
+        return $this->belongsTo(Cargo::class);
     }
 
-    public function lotacoes()
-    {
-        return $this->hasMany(Lotacao::class);
-    }
 }

@@ -46,4 +46,9 @@ class Setor extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function lotacoes()
+    {
+        return $this->hasMany(Lotacao::class);
+    }
 }

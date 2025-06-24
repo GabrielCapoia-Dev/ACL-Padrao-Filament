@@ -159,7 +159,7 @@ class ServidorResource extends Resource
                             ->implode(' | ');
                     })
                     ->wrap()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -182,8 +182,8 @@ class ServidorResource extends Resource
                         })->toArray();
                     }),
 
-                SelectFilter::make('setores')  // <--- Filtro de Setor
-                    ->label('Setor')
+                SelectFilter::make('setores')
+                    ->label('Local de Trabalho')
                     ->relationship('setores', 'nome')
                     ->multiple(),
 
