@@ -59,4 +59,9 @@ class Servidor extends Model
     {
         return $this->belongsToMany(Setor::class, 'servidor_setor');
     }
+
+    public function cargaHoraria()
+    {
+        return $this->hasOne(CargaHoraria::class);
+    }
 }

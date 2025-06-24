@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServidorResource\Pages;
-use App\Filament\Resources\ServidorResource\RelationManagers;
 use App\Models\Servidor;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use Filament\Tables\Actions\Action;
 
 class ServidorResource extends Resource
 {
@@ -30,7 +30,7 @@ class ServidorResource extends Resource
 
     public static function getTableQuery(): Builder
     {
-        return parent::getTableQuery()->with('setores');
+        return parent::getTableQuery()->with(['setores', 'cargaHoraria']);
     }
 
     public static function form(Form $form): Form
@@ -65,8 +65,36 @@ class ServidorResource extends Resource
                     ->preload()
                     ->multiple()
                     ->required(),
+
+                Forms\Components\Section::make('Carga Horária')
+                    ->schema([
+                        Forms\Components\Group::make()
+                            ->relationship('cargaHoraria')
+                            ->schema([
+                                Forms\Components\TimePicker::make('entrada')
+                                    ->label('Entrada')
+                                    ->required()
+                                    ->seconds(false),
+
+                                Forms\Components\TimePicker::make('saida_intervalo')
+                                    ->label('Saída para Almoço')
+                                    ->seconds(false),
+
+                                Forms\Components\TimePicker::make('entrada_intervalo')
+                                    ->label('Retorno do Almoço')
+                                    ->seconds(false),
+
+                                Forms\Components\TimePicker::make('saida')
+                                    ->label('Saída')
+                                    ->required()
+                                    ->seconds(false),
+                            ])
+                    ])
+                    ->columns(2)
+                    ->collapsed(),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -74,14 +102,14 @@ class ServidorResource extends Resource
             ->paginated([10, 25, 50, 100])
             ->columns([
                 Tables\Columns\TextColumn::make('setores')
-                    ->label('Setores')
+                    ->label('Local de Trabalho')
                     ->getStateUsing(
                         fn($record) =>
                         $record->setores && $record->setores->count() > 0
                             ? $record->setores->pluck('nome')->join(', ')
                             : null
                     )
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->sortable(),
 
@@ -96,22 +124,43 @@ class ServidorResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->sortable()
                     ->label('Email')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cargo.nome')
                     ->sortable()
                     ->label('Cargo')
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cargo.regimeContratual.nome')
                     ->sortable()
                     ->label('Regime Contratual')
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('turno.nome')
                     ->sortable()
                     ->label('Turno')
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('cargaHoraria')
+                    ->label('Carga Horária')
+                    ->getStateUsing(function ($record) {
+                        $carga = $record->cargaHoraria;
+
+                        if (!$carga) return '-';
+
+                        return collect([
+                            $carga->entrada ? 'Entrada: ' . $carga->entrada : null,
+                            $carga->saida_intervalo ? 'Saída Almoço: ' . $carga->saida_intervalo : null,
+                            $carga->entrada_intervalo ? 'Retorno: ' . $carga->entrada_intervalo : null,
+                            $carga->saida ? 'Saída: ' . $carga->saida : null,
+                        ])
+                            ->filter()
+                            ->implode(' | ');
+                    })
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -122,11 +171,71 @@ class ServidorResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                
+                SelectFilter::make('cargo_id')
+                    ->label('Cargo')
+                    ->multiple()
+                    ->options(function () {
+                        return \App\Models\Cargo::with('regimeContratual')->get()->mapWithKeys(function ($cargo) {
+                            return [
+                                $cargo->id => "{$cargo->nome} - {$cargo->regimeContratual->nome}"
+                            ];
+                        })->toArray();
+                    }),
+
+                SelectFilter::make('setores')  // <--- Filtro de Setor
+                    ->label('Setor')
+                    ->relationship('setores', 'nome')
+                    ->multiple(),
+
+                SelectFilter::make('turno_id')
+                    ->label('Turno')
+                    ->relationship('turno', 'nome')
+                    ->query(function (Builder $query, array $data) {
+                        if (empty($data['value'])) return;
+                        $query->where('turno_id', $data['value']);
+                    }),
+
+                Tables\Filters\Filter::make('entrada_range')
+                    ->form([
+                        Forms\Components\TimePicker::make('entrada_min')
+                            ->seconds(false)
+                            ->label('Entrada Mínima'),
+                        Forms\Components\TimePicker::make('entrada_max')
+                            ->seconds(false)
+                            ->label('Entrada Máxima'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['entrada_min'])) {
+                            $query->whereHas('cargaHoraria', fn($q) => $q->where('entrada', '>=', $data['entrada_min']));
+                        }
+                        if (!empty($data['entrada_max'])) {
+                            $query->whereHas('cargaHoraria', fn($q) => $q->where('entrada', '<=', $data['entrada_max']));
+                        }
+                    }),
+
+                Tables\Filters\Filter::make('search')
+                    ->form([
+                        Forms\Components\TextInput::make('search')->label('Buscar'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (empty($data['search'])) return;
+
+                        $search = $data['search'];
+
+                        $query->where(function ($q) use ($search) {
+                            $q->where('nome', 'like', "%{$search}%")
+                                ->orWhereHas('cargo', fn($q) => $q->where('nome', 'like', "%{$search}%"))
+                                ->orWhereHas('turno', fn($q) => $q->where('nome', 'like', "%{$search}%"))
+                                ->orWhereHas('cargo.regimeContratual', fn($q) => $q->where('nome', 'like', "%{$search}%"));
+                        });
+                    }),
             ])
+
+
 
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -134,6 +243,7 @@ class ServidorResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

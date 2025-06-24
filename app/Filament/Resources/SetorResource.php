@@ -22,11 +22,11 @@ class SetorResource extends Resource
 
     protected static ?string $navigationGroup = 'RH';
 
-    public static ?string $modelLabel = 'Setor';
+    public static ?string $modelLabel = 'Local de Trabalho';
 
-    public static ?string $pluralModelLabel = 'Setores';
+    public static ?string $pluralModelLabel = 'Locais de Trabalho';
 
-    public static ?string $slug = 'setores';
+    public static ?string $slug = 'locais-de-trabalho';
 
     public static function form(Form $form): Form
     {

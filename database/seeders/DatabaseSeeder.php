@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CargaHoraria;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Models\Turno;
 use App\Models\RegimeContratual;
 use App\Models\Cargo;
 use App\Models\Servidor;
+use App\Models\Setor;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -122,18 +124,112 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+
         // ========================
-        // Criação de X servidores aleatórios
+        // Criação de Setores (escolas)
+        // ========================
+        $nomesEscolas = [
+            'Escola Municipal São José',
+            'Escola Estadual Tiradentes',
+            'CMEI Pequeno Príncipe',
+            'Colégio Estadual Rui Barbosa',
+            'Escola Municipal Sol Nascente',
+            'CMEI Estrelinha Azul',
+            'Escola Municipal Monteiro Lobato',
+            'Colégio Estadual Monte Castelo',
+            'CMEI Arco-Íris',
+            'Escola Municipal Castro Alves',
+            'CMEI Mundo Encantado',
+            'Colégio Estadual Dom Pedro II',
+            'Escola Municipal Maria Quitéria',
+            'CMEI Anjo da Guarda',
+            'Escola Municipal Irmã Dulce',
+            'CMEI Brilho do Sol',
+            'Escola Estadual Paulo Freire',
+            'Colégio Estadual Machado de Assis',
+            'CMEI Pingo de Gente',
+            'Escola Municipal Cecília Meireles',
+            'CMEI Gira Mundo',
+            'Colégio Estadual Santos Dumont',
+            'Escola Municipal Heitor Villa-Lobos',
+            'CMEI Jardim da Alegria',
+            'Escola Municipal Juscelino Kubitschek',
+        ];
+
+        $setores = [];
+
+        foreach ($nomesEscolas as $nome) {
+            $setores[] = Setor::firstOrCreate(
+                ['nome' => $nome],
+                [
+                    'email' => fake()->unique()->safeEmail(),
+                    'telefone' => fake()->phoneNumber(),
+                ]
+            );
+        }
+
+
+        // ========================
+        // Criação de X servidores aleatórios com setor
         // ========================
         $numeroServidores = 100;
 
         for ($i = 1; $i <= $numeroServidores; $i++) {
-            Servidor::create([
+            $servidor = Servidor::create([
                 'nome' => fake()->name(),
                 'matricula' => str_pad($i, 4, '0', STR_PAD_LEFT),
                 'email' => fake()->unique()->safeEmail(),
                 'cargo_id' => Cargo::inRandomOrder()->first()->id,
                 'turno_id' => Turno::inRandomOrder()->first()->id,
+            ]);
+
+            // Vincular o servidor a 1 a 3 setores aleatórios
+            $setoresAleatorios = collect($setores)->random(rand(1, 3))->pluck('id');
+            $servidor->setores()->attach($setoresAleatorios);
+
+            $turnoNome = $servidor->turno->nome;
+
+            switch ($turnoNome) {
+                case 'Integral':
+                    $entrada = '08:00';
+                    $saida_intervalo = '12:00';
+                    $entrada_intervalo = '13:30';
+                    $saida = '17:00';
+                    break;
+
+                case 'Manhã':
+                    $entrada = '08:00';
+                    $saida_intervalo = '12:00';
+                    $entrada_intervalo = null;
+                    $saida = null;
+                    break;
+
+                case 'Tarde':
+                    $entrada = null;
+                    $saida_intervalo = null;
+                    $entrada_intervalo = '13:30';
+                    $saida = '17:00';
+                    break;
+
+                case 'Noite':
+                    $entrada = '18:00';
+                    $saida_intervalo = null;
+                    $entrada_intervalo = null;
+                    $saida = '23:00';
+                    break;
+
+                default:
+                    $entrada = $saida_intervalo = $entrada_intervalo = $saida = null;
+                    break;
+            }
+
+
+            CargaHoraria::create([
+                'servidor_id' => $servidor->id,
+                'entrada' => $entrada,
+                'saida_intervalo' => $saida_intervalo,
+                'entrada_intervalo' => $entrada_intervalo,
+                'saida' => $saida,
             ]);
         }
     }
