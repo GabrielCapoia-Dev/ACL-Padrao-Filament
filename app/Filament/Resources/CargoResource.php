@@ -32,6 +32,7 @@ class CargoResource extends Resource
                     ->label('Descrição'),
                 Forms\Components\Select::make('regime_contratual_id')
                     ->label('Regime Contratual')
+                    ->preload()
                     ->relationship('regimeContratual', 'nome')
                     ->required(),
             ]);

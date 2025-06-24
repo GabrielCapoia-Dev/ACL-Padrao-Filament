@@ -27,7 +27,6 @@ class Cargo extends Model
         'nome',
         'descricao',
         'regime_contratual_id',
-        'lotacao_id',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -37,7 +36,6 @@ class Cargo extends Model
                 'nome',
                 'descricao',
                 'regime_contratual_id',
-                'lotacao_id',
             ]);
     }
 

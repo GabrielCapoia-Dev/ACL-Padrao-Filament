@@ -48,12 +48,14 @@ class LotacaoResource extends Resource
                 Forms\Components\Select::make('setor_id')
                     ->label('Local de Trabalho')
                     ->relationship('setor', 'nome')
+                    ->preload()
                     ->required(),
 
                 Forms\Components\Select::make('cargo_id')
                     ->label('Cargo')
                     ->relationship('cargo', 'nome')
                     ->getOptionLabelFromRecordUsing(fn($record) => "{$record->nome} - {$record->regimeContratual->nome}")
+                    ->preload()
                     ->required(),
             ]);
     }

@@ -72,6 +72,7 @@ class RoleResource extends Resource
                     ->label('Nivel de acesso')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime('d/m/Y H:i:s')
                     ->sortable(),
             ])

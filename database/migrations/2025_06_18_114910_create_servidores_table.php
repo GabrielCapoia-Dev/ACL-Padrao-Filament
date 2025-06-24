@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->foreignId('cargo_id')->constrained()->nullOnDelete()->nullable();
             $table->foreignId('turno_id')->constrained()->nullOnDelete()->nullable();
+            $table->foreignId('lotacao_id')->constrained('lotacoes')->nullOnDelete()->nullable();
             $table->timestamps();
         });
     }

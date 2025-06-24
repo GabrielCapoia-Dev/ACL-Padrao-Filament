@@ -30,7 +30,7 @@ class ServidorResource extends Resource
 
     public static function getTableQuery(): Builder
     {
-        return parent::getTableQuery()->with(['setores', 'cargaHoraria']);
+        return parent::getTableQuery()->with(['setores', 'cargaHoraria', 'lotacao']);
     }
 
     public static function form(Form $form): Form
@@ -52,18 +52,28 @@ class ServidorResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('cargo_id')
                     ->label('Cargo')
+                    ->preload()
                     ->relationship('cargo', 'nome')
                     ->getOptionLabelFromRecordUsing(fn($record) => "{$record->nome} - {$record->regimeContratual->nome}")
                     ->required(),
                 Forms\Components\Select::make('turno_id')
                     ->label('Turno')
+                    ->preload()
                     ->relationship('turno', 'nome')
                     ->required(),
+
                 Forms\Components\Select::make('setores')
-                    ->label('Setores')
+                    ->label('Locais de Trabalho')
                     ->relationship('setores', 'nome')
                     ->preload()
                     ->multiple()
+                    ->required(),
+
+                Forms\Components\Select::make('lotacao_id')
+                    ->label('Lotação')
+                    ->relationship('lotacao', 'nome')
+                    ->preload()
+
                     ->required(),
 
                 Forms\Components\Section::make('Carga Horária')
@@ -113,29 +123,52 @@ class ServidorResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('lotacao.codigo')
+                    ->label('Codigo da Lotação')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('lotacao.nome')
+                    ->label('Nome da Lotação')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('lotacao.setor.nome')
+                    ->label('Local de Lotação')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('matricula')
                     ->sortable()
                     ->label('Matricula')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('nome')
                     ->sortable()
                     ->label('Nome')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('email')
                     ->sortable()
                     ->label('Email')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('cargo.nome')
                     ->sortable()
                     ->label('Cargo')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('cargo.regimeContratual.nome')
                     ->sortable()
                     ->label('Regime Contratual')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('turno.nome')
                     ->sortable()
                     ->label('Turno')
@@ -162,10 +195,12 @@ class ServidorResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -173,6 +208,7 @@ class ServidorResource extends Resource
             ->filters([
                 SelectFilter::make('cargo_id')
                     ->label('Cargo')
+                    ->preload()
                     ->multiple()
                     ->options(function () {
                         return \App\Models\Cargo::with('regimeContratual')->get()->mapWithKeys(function ($cargo) {
@@ -184,15 +220,29 @@ class ServidorResource extends Resource
 
                 SelectFilter::make('setores')
                     ->label('Local de Trabalho')
+                    ->preload()
                     ->relationship('setores', 'nome')
                     ->multiple(),
 
                 SelectFilter::make('turno_id')
                     ->label('Turno')
+                    ->preload()
                     ->relationship('turno', 'nome')
                     ->query(function (Builder $query, array $data) {
                         if (empty($data['value'])) return;
                         $query->where('turno_id', $data['value']);
+                    }),
+
+                SelectFilter::make('lotacao_id')
+                    ->label('Lotação')
+                    ->multiple()
+                    ->preload()
+                    ->options(function () {
+                        return \App\Models\Lotacao::with('setor')->get()->mapWithKeys(function ($lotacao) {
+                            return [
+                                $lotacao->id => "{$lotacao->codigo} - {$lotacao->nome} ({$lotacao->setor->nome})"
+                            ];
+                        })->toArray();
                     }),
 
                 Tables\Filters\Filter::make('entrada_range')

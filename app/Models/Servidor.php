@@ -30,6 +30,7 @@ class Servidor extends Model
         'email',
         'cargo_id',
         'turno_id',
+        'lotacao_id',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -41,6 +42,7 @@ class Servidor extends Model
                 'email',
                 'cargo_id',
                 'turno_id',
+                'lotacao_id',
             ]);
     }
 
@@ -63,5 +65,10 @@ class Servidor extends Model
     public function cargaHoraria()
     {
         return $this->hasOne(CargaHoraria::class);
+    }
+
+    public function lotacao()
+    {
+        return $this->belongsTo(\App\Models\Lotacao::class);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Turno;
 use App\Models\RegimeContratual;
 use App\Models\Cargo;
+use App\Models\Lotacao;
 use App\Models\Servidor;
 use App\Models\Setor;
 use Spatie\Permission\Models\Role;
@@ -130,22 +131,6 @@ class DatabaseSeeder extends Seeder
         // ========================
         $nomesEscolas = [
             'Escola Municipal São José',
-            'Escola Estadual Tiradentes',
-            'CMEI Pequeno Príncipe',
-            'Colégio Estadual Rui Barbosa',
-            'Escola Municipal Sol Nascente',
-            'CMEI Estrelinha Azul',
-            'Escola Municipal Monteiro Lobato',
-            'Colégio Estadual Monte Castelo',
-            'CMEI Arco-Íris',
-            'Escola Municipal Castro Alves',
-            'CMEI Mundo Encantado',
-            'Colégio Estadual Dom Pedro II',
-            'Escola Municipal Maria Quitéria',
-            'CMEI Anjo da Guarda',
-            'Escola Municipal Irmã Dulce',
-            'CMEI Brilho do Sol',
-            'Escola Estadual Paulo Freire',
             'Colégio Estadual Machado de Assis',
             'CMEI Pingo de Gente',
             'Escola Municipal Cecília Meireles',
@@ -168,6 +153,22 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // ========================
+        // Criação de Lotações (contrato por setor)
+        // ========================
+        $lotacoes = [];
+
+        foreach ($setores as $setor) {
+            foreach (Cargo::all() as $cargo) {
+                $lotacoes[] = Lotacao::create([
+                    'nome' => "{$cargo->nome} - {$setor->nome}",
+                    'codigo' => fake()->unique()->numerify('LOT###'),
+                    'descricao' => "Lotação para {$cargo->descricao} em {$setor->nome}",
+                    'setor_id' => $setor->id,
+                    'cargo_id' => $cargo->id,
+                ]);
+            }
+        }
 
         // ========================
         // Criação de X servidores aleatórios com setor
@@ -181,6 +182,7 @@ class DatabaseSeeder extends Seeder
                 'email' => fake()->unique()->safeEmail(),
                 'cargo_id' => Cargo::inRandomOrder()->first()->id,
                 'turno_id' => Turno::inRandomOrder()->first()->id,
+                'lotacao_id' => collect($lotacoes)->random()->id,
             ]);
 
             // Vincular o servidor a 1 a 3 setores aleatórios

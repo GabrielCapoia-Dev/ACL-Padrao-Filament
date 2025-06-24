@@ -44,5 +44,26 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(DominioEmail::class, DominioEmailPolicy::class);
+
+        FilamentView::registerRenderHook('panels::body.end', function () {
+            if (!request()->routeIs('filament.admin.resources.servidores.*')) {
+                return '';
+            }
+
+            return <<<'HTML'
+            <style>
+                /* Aumenta a largura máxima do modal de filtros */
+                .filament-tables-filters-modal .fi-modal {
+                    max-width: 80rem !important; /* ~1280px */
+                    width: 100%; /* permite uso do espaço */
+                }
+
+                /* Se quiser ajustar o grid interno (ex: espaçamento interno) */
+                .filament-tables-filters-modal .fi-modal-content {
+                    padding: 2rem;
+                }
+            </style>
+        HTML;
+        });
     }
 }

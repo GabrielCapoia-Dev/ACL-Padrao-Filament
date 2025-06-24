@@ -50,4 +50,9 @@ class Lotacao extends Model
         return $this->belongsTo(Cargo::class);
     }
 
+    public function servidores()
+    {
+        return $this->hasMany(Servidor::class);
+    }
+
 }
