@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 
 use Filament\Tables\Actions\Action;
 
@@ -81,26 +82,29 @@ class ServidorResource extends Resource
                         Forms\Components\Group::make()
                             ->relationship('cargaHoraria')
                             ->schema([
-                                Forms\Components\TimePicker::make('entrada')
-                                    ->label('Entrada')
-                                    ->required()
-                                    ->seconds(false),
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TimePicker::make('entrada')
+                                            ->label('Entrada')
+                                            ->required()
+                                            ->seconds(false),
 
-                                Forms\Components\TimePicker::make('saida_intervalo')
-                                    ->label('Saída para Almoço')
-                                    ->seconds(false),
+                                        Forms\Components\TimePicker::make('saida_intervalo')
+                                            ->label('Saída para Almoço')
+                                            ->seconds(false),
 
-                                Forms\Components\TimePicker::make('entrada_intervalo')
-                                    ->label('Retorno do Almoço')
-                                    ->seconds(false),
+                                        Forms\Components\TimePicker::make('entrada_intervalo')
+                                            ->label('Retorno do Almoço')
+                                            ->seconds(false),
 
-                                Forms\Components\TimePicker::make('saida')
-                                    ->label('Saída')
-                                    ->required()
-                                    ->seconds(false),
+                                        Forms\Components\TimePicker::make('saida')
+                                            ->label('Saída')
+                                            ->required()
+                                            ->seconds(false),
+                                    ])
                             ])
                     ])
-                    ->columns(2)
+                    ->columns(1)
                     ->collapsed(),
             ]);
     }
@@ -286,6 +290,9 @@ class ServidorResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->headerActions([
+                FilamentExportHeaderAction::make('export'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

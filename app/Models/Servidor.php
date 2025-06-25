@@ -71,4 +71,9 @@ class Servidor extends Model
     {
         return $this->belongsTo(\App\Models\Lotacao::class);
     }
+
+    public function atestados()
+    {
+        return $this->hasMany(Atestado::class);
+    }
 }

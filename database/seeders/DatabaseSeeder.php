@@ -14,6 +14,7 @@ use App\Models\Servidor;
 use App\Models\Setor;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Models\TipoAtestado;
 
 class DatabaseSeeder extends Seeder
 {
@@ -154,7 +155,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // ========================
-        // Criação de Lotações (contrato por setor)
+        // Criação de Lotações
         // ========================
         $lotacoes = [];
 
@@ -162,12 +163,37 @@ class DatabaseSeeder extends Seeder
             foreach (Cargo::all() as $cargo) {
                 $lotacoes[] = Lotacao::create([
                     'nome' => "{$cargo->nome} - {$setor->nome}",
-                    'codigo' => fake()->unique()->numerify('LOT###'),
+                    'codigo' => fake()->unique()->numerify('013.123.###'),
                     'descricao' => "Lotação para {$cargo->descricao} em {$setor->nome}",
                     'setor_id' => $setor->id,
                     'cargo_id' => $cargo->id,
                 ]);
             }
+        }
+
+        // ========================
+        // Criação de Tipos de Atestados
+        // ========================
+
+        $tipos = [
+            'Licença Tratamento de Saúde',
+            'Férias',
+            'Licença Premio',
+            'Licença Gala',
+            'Licença Luto',
+            'Licença Sem Vencimento',
+            'Licença Maternidade',
+            'Licença para assumir outro cargo',
+            'Licença Acidente de Trabalho',
+            'Licença Serviço Militar',
+            'Licenças Outras',
+            'Licença para Acompanhamento',
+        ];
+
+        foreach ($tipos as $nome) {
+            TipoAtestado::create([
+                'nome' => $nome,
+            ]);
         }
 
         // ========================

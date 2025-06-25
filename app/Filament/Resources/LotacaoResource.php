@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\LotacaoResource\Pages;
 use App\Filament\Resources\LotacaoResource\RelationManagers;
 use App\Models\Lotacao;
@@ -117,6 +118,9 @@ class LotacaoResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->headerActions([
+                FilamentExportHeaderAction::make('export'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
