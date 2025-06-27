@@ -38,7 +38,7 @@ class UserResource extends Resource
 
     public static ?string $modelLabel = 'Usuário';
 
-    protected static ?string $navigationGroup = "Gerenciamento";
+    protected static ?string $navigationGroup = "Administrativo";
 
     public static ?string $pluralModelLabel = 'Usuários';
 

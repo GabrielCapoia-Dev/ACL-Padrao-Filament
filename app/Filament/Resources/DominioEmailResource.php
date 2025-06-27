@@ -36,7 +36,7 @@ class DominioEmailResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-at-symbol';
 
-    protected static ?string $navigationGroup = "Gerenciamento";
+    protected static ?string $navigationGroup = "Administrativo";
 
     public static ?string $label = 'Dominio Permitido';
 

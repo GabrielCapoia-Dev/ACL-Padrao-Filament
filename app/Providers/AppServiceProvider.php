@@ -24,15 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Injetando html direto na tela de login 
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-            fn(): string => <<< 'HTML'
-            <div class='flex justify-end gap-1 text-sm'>
-                <a href="/admin/password-reset" class="text-primary-500">Esqueceu sua senha?</a>
-            </div>
-            HTML
-        );
+        // // Injetando html direto na tela de login 
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+        //     fn(): string => <<< 'HTML'
+        //     <div class='flex justify-end gap-1 text-sm'>
+        //         <a href="/admin/password-reset" class="text-primary-500">Esqueceu sua senha?</a>
+        //     </div>
+        //     HTML
+        // );
     }
 
     /**
@@ -52,13 +52,11 @@ class AppServiceProvider extends ServiceProvider
 
             return <<<'HTML'
             <style>
-                /* Aumenta a largura máxima do modal de filtros */
                 .filament-tables-filters-modal .fi-modal {
-                    max-width: 80rem !important; /* ~1280px */
-                    width: 100%; /* permite uso do espaço */
+                    max-width: 80rem !important;
+                    width: 100%;
                 }
 
-                /* Se quiser ajustar o grid interno (ex: espaçamento interno) */
                 .filament-tables-filters-modal .fi-modal-content {
                     padding: 2rem;
                 }

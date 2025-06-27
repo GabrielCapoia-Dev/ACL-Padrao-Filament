@@ -22,7 +22,7 @@ class AtestadoService
         }
 
         if (!$dataInicio || !$dataFim) {
-            return '0'; // ou lançar exceção, dependendo da regra
+            return '0';
         }
 
         $inicio = Carbon::parse($dataInicio)->startOfDay();
@@ -35,8 +35,6 @@ class AtestadoService
 
     public static function validarDataRetroativa(int $dataInicio, int $dataFim): bool
     {
-
-        
         if ($dataInicio > $dataFim) {
             return true;
         }

@@ -38,4 +38,9 @@ class Turno extends Model
     {
         return $this->hasMany(Servidor::class);
     }
+    
+    public function declaracaoDeHoras()
+    {
+        return $this->hasMany(Servidor::class);
+    }
 }

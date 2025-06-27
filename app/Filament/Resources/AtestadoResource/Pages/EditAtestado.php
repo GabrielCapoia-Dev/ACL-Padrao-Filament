@@ -13,6 +13,8 @@ class EditAtestado extends EditRecord
 {
     protected static string $resource = AtestadoResource::class;
 
+        protected static ?string $title = 'Editar Afastamento';
+
     public function mutateFormDataBeforeSave(array $data): array
     {
 

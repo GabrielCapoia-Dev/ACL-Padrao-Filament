@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
 
         // Lista de permissões
         $permissionsList = [
-            'Acessar Painel',
             'Listar Usuários',
             'Criar Usuários',
             'Editar Usuários',
@@ -44,21 +43,21 @@ class DatabaseSeeder extends Seeder
             'Excluir Dominios de Email',
         ];
 
-        $accessPainelPermissions = [
-            'Acessar Painel',
-        ];
-
         // Criação de permissões
         foreach ($permissionsList as $permissionName) {
             Permission::firstOrCreate(['name' => $permissionName]);
         }
 
         // Criação de roles
+        $superAdminRole = Role::firstOrCreate(['name' => 'SuperAdmin']);
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        $accessPainelRole = Role::firstOrCreate(['name' => 'Acessar Painel']);
+        Role::firstOrCreate(['name' => 'Usuário']);
+        Role::firstOrCreate(['name' => 'Secretário']);
+        Role::firstOrCreate(['name' => 'Coordenador']);
+        Role::firstOrCreate(['name' => 'Diretor']);
 
+        $superAdminRole->syncPermissions($permissionsList);
         $adminRole->syncPermissions($permissionsList);
-        $accessPainelRole->syncPermissions($accessPainelPermissions);
 
         // Criação do usuário admin
         $adminUser = User::firstOrCreate(

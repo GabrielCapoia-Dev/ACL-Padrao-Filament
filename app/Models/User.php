@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($this->email_approved && $this->hasPermissionTo('Acessar Painel')) {
+        if ($this->email_approved) {
             return true;
         }
 
