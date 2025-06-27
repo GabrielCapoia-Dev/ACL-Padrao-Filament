@@ -6,12 +6,16 @@ use App\Exceptions\SubstitutoIgualServidorException;
 use App\Filament\Resources\AtestadoResource;
 use App\Services\AtestadoService;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAtestado extends CreateRecord
 {
     protected static string $resource = AtestadoResource::class;
+
+    protected static ?string $title = 'Registrar Afastamento';
+
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

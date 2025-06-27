@@ -4,8 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AtestadoResource\Pages;
 use App\Models\Atestado;
-use App\Models\Servidor;
-use App\Services\AtestadoService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,9 +21,9 @@ class AtestadoResource extends Resource
 
     protected static ?string $navigationGroup = 'Gerenciamento';
 
-    protected static ?string $modelLabel = 'Atestado';
+    protected static ?string $modelLabel = 'Afastamento';
 
-    protected static ?string $pluralModelLabel = 'Atestados';
+    protected static ?string $pluralModelLabel = 'Afastamentos';
 
 
 
@@ -168,7 +166,6 @@ class AtestadoResource extends Resource
                     ->date()
                     ->sortable(),
 
-
                 Tables\Columns\TextColumn::make('cid')
                     ->label('CID')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -226,8 +223,8 @@ class AtestadoResource extends Resource
             ])
             ->headerActions([
                 FilamentExportHeaderAction::make('export')
-                ->defaultFormat('pdf')
-                ->disableAdditionalColumns()
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

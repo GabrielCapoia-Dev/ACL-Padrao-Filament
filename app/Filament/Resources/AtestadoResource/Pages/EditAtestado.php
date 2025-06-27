@@ -15,9 +15,28 @@ class EditAtestado extends EditRecord
 
     public function mutateFormDataBeforeSave(array $data): array
     {
-        if ($data['servidor_id'] === $data['substituto_id']) {
+
+        $servidor_id = (string) $data['servidor_id'];
+        $substituto_id = (string) $data['substituto_id'];
+
+        if ($servidor_id === $substituto_id) {
             Notification::make()
-                ->title('O servidor não pode substituir a si mesmo.')
+                ->title('Atenção.')
+                ->body('O servidor não pode substituir a si mesmo.')
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->halt();
+        }
+
+        $dataInicio = (int) $data['data_inicio'];
+        $dataFim = (int) $data['data_fim'];
+
+        if (AtestadoService::validarDataRetroativa($dataInicio, $dataFim) === false) {
+            Notification::make()
+                ->title('Atenção.')
+                ->body('Impossivel registrar um afastamento com data retroativa')
                 ->danger()
                 ->persistent()
                 ->send();

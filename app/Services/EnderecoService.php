@@ -1,50 +1,50 @@
 <?php
 
-namespace App\Services;
+// namespace App\Services;
 
-use App\Models\Endereco;
-use Filament\Notifications\Notification;
+// use App\Models\Endereco;
+// use Filament\Notifications\Notification;
 
-class EnderecoService
-{
+// class EnderecoService
+// {
 
 
-    public function salvarEndereco(array $data): endereco
-    {
-        if(empty($data)) {
-            Notification::make()
-                ->title('Erro ao salvar endereço')
-                ->body('Nenhum endereço informado')
-                ->error()
-                ->send();
-            throw new \Exception('Nenhum endereço informado');
-        }
+//     public function salvarEndereco(array $data): endereco
+//     {
+//         if(empty($data)) {
+//             Notification::make()
+//                 ->title('Erro ao salvar endereço')
+//                 ->body('Nenhum endereço informado')
+//                 ->error()
+//                 ->send();
+//             throw new \Exception('Nenhum endereço informado');
+//         }
         
-        try {
+//         try {
 
-            $endereco = new Endereco;
+//             $endereco = new Endereco;
 
-            $endereco->create([
-                'cep' => $data['cep'],
-                'logradouro' => $data['logradouro'],
-                'bairro' => $data['bairro'],
-                'cidade' => $data['cidade'],
-                'uf' => $data['uf'],
-                'complemento' => $data['complemento'],
-                'numero' => $data['numero'],
-            ]);
+//             $endereco->create([
+//                 'cep' => $data['cep'],
+//                 'logradouro' => $data['logradouro'],
+//                 'bairro' => $data['bairro'],
+//                 'cidade' => $data['cidade'],
+//                 'uf' => $data['uf'],
+//                 'complemento' => $data['complemento'],
+//                 'numero' => $data['numero'],
+//             ]);
 
-            return $endereco;
+//             return $endereco;
 
-        } catch (\Exception $e) {
+//         } catch (\Exception $e) {
 
-            Notification::make()
-                ->title('Erro ao salvar endereço')
-                ->body($e->getMessage())
-                ->error()
-                ->send();
+//             Notification::make()
+//                 ->title('Erro ao salvar endereço')
+//                 ->body($e->getMessage())
+//                 ->error()
+//                 ->send();
                 
-            throw new \Exception($e->getMessage());
-        }
-    }
-}
+//             throw new \Exception($e->getMessage());
+//         }
+//     }
+// }

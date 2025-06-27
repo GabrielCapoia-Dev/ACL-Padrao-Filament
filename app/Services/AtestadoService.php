@@ -32,4 +32,15 @@ class AtestadoService
 
         return (string) $dias;
     }
+
+    public static function validarDataRetroativa(int $dataInicio, int $dataFim): bool
+    {
+
+        
+        if ($dataInicio > $dataFim) {
+            return true;
+        }
+
+        return false;
+    }
 }
