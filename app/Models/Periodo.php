@@ -18,4 +18,9 @@ class Periodo extends Model
     protected $fillable = [
         'nome',
     ];
+
+    public function turmas()
+    {
+        return $this->hasMany(Turma::class);
+    }
 }

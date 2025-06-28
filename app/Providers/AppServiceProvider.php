@@ -7,12 +7,14 @@ use App\Models\DominioEmail;
 use App\Models\Periodo;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Turma;
 use App\Models\User;
 use App\Policies\CursoPolicy;
 use App\Policies\DominioEmailPolicy;
 use App\Policies\PeriodoPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
+use App\Policies\TurmaPolicy;
 use App\Policies\UserPolicy;
 use BladeUI\Icons\Factory;
 use Filament\Support\Facades\FilamentIcon;
@@ -50,5 +52,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(DominioEmail::class, DominioEmailPolicy::class);
         Gate::policy(Curso::class, CursoPolicy::class);
         Gate::policy(Periodo::class, PeriodoPolicy::class);
+        Gate::policy(Turma::class, TurmaPolicy::class);
     }
 }

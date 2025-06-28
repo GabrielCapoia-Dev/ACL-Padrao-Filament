@@ -19,4 +19,8 @@ class Turno extends Model
         'nome',
     ];
     
+    public function turmas()
+    {
+        return $this->hasMany(Turma::class);
+    }
 }

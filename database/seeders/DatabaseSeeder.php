@@ -44,6 +44,10 @@ class DatabaseSeeder extends Seeder
             'Criar Periodos',
             'Editar Periodos',
             'Excluir Periodos',
+            'Listar Turmas',
+            'Criar Turmas',
+            'Editar Turmas',
+            'Excluir Turmas',
         ];
 
         // Criação (ou recuperação) das permissões
