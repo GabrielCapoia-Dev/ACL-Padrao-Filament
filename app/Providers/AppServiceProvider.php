@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Models\Curso;
 use App\Models\DominioEmail;
+use App\Models\Periodo;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Policies\CursoPolicy;
 use App\Policies\DominioEmailPolicy;
+use App\Policies\PeriodoPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
@@ -47,5 +49,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(DominioEmail::class, DominioEmailPolicy::class);
         Gate::policy(Curso::class, CursoPolicy::class);
+        Gate::policy(Periodo::class, PeriodoPolicy::class);
     }
 }

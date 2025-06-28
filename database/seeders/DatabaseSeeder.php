@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Curso;
+use App\Models\Periodo;
 use App\Models\Turno;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,10 @@ class DatabaseSeeder extends Seeder
             'Criar Curso',
             'Editar Curso',
             'Excluir Curso',
+            'Listar Periodos',
+            'Criar Periodos',
+            'Editar Periodos',
+            'Excluir Periodos',
         ];
 
         // Criação (ou recuperação) das permissões
@@ -92,6 +97,28 @@ class DatabaseSeeder extends Seeder
 
         foreach ($cursos as $curso) {
             Curso::firstOrCreate(['nome' => $curso]);
+        }
+
+        // ========================
+        // Criação de Periodos
+        // ========================
+        $periodos = [
+            '1º Período',
+            '2º Período',
+            '3º Período',
+            '4º Período',
+            '5º Período',
+            '6º Período',
+            '7º Período',
+            '8º Período',
+            '9º Período',
+            '10º Período',
+            '11º Período',
+            '12º Período',
+        ];
+
+        foreach ($periodos as $periodo) {
+            Periodo::firstOrCreate(['nome' => $periodo]);
         }
     }
 }

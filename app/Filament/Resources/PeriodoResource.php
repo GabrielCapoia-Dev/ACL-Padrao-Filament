@@ -2,28 +2,31 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CursoResource\Pages;
-use App\Models\Curso;
-use Illuminate\Support\Facades\Auth;
+use App\Filament\Resources\PeriodoResource\Pages;
+use App\Filament\Resources\PeriodoResource\RelationManagers;
+use App\Models\Periodo;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
-class CursoResource extends Resource
+class PeriodoResource extends Resource
 {
-    protected static ?string $model = Curso::class;
+    protected static ?string $model = Periodo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationGroup = "Gestão Escolar";
 
-    public static ?string $label = 'Curso';
+    public static ?string $label = 'Período';
 
-    public static ?string $pluralLabel = 'Cursos';
+    public static ?string $pluralLabel = 'Periódos';
 
-    public static ?string $slug = 'cursos';
+    public static ?string $slug = 'periodos';
 
     public static function form(Form $form): Form
     {
@@ -83,7 +86,7 @@ class CursoResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCursos::route('/'),
+            'index' => Pages\ManagePeriodos::route('/'),
         ];
     }
 }
