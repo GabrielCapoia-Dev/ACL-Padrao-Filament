@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Curso;
+use App\Models\Turno;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -17,7 +19,6 @@ class DatabaseSeeder extends Seeder
 
         // Lista de permissões que serão atribuídas à role Admin
         $permissionsList = [
-            'Acessar Painel',
             'Listar Usuários',
             'Criar Usuários',
             'Editar Usuários',
@@ -34,10 +35,10 @@ class DatabaseSeeder extends Seeder
             'Criar Dominios de Email',
             'Editar Dominios de Email',
             'Excluir Dominios de Email',
-        ];
-
-        $accessPainelPermissions = [
-            'Acessar Painel',
+            'Listar Curso',
+            'Criar Curso',
+            'Editar Curso',
+            'Excluir Curso',
         ];
 
         // Criação (ou recuperação) das permissões
@@ -47,14 +48,9 @@ class DatabaseSeeder extends Seeder
 
         // Criação da rule (role) Admin
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        
-        // Criação da rule (role) Usuário
-        $accessPainelRule = Role::firstOrCreate(['name' => 'Acessar Painel']);
 
         // Atribui todas as permissões à role Admin
         $adminRole->syncPermissions($permissionsList);
-        
-        $accessPainelRule->syncPermissions($accessPainelPermissions);
 
         // Criação do usuário admin
         $adminUser = User::firstOrCreate(
@@ -69,5 +65,33 @@ class DatabaseSeeder extends Seeder
 
         // Atribui a role Admin ao usuário
         $adminUser->assignRole($adminRole);
+
+        // ========================
+        // Criação de Turnos
+        // ========================
+        $turnos = [
+            'Manhã',
+            'Tarde',
+            'Noite',
+            'Integral',
+        ];
+
+        foreach ($turnos as $turno) {
+            Turno::firstOrCreate(['nome' => $turno]);
+        }
+
+        // ========================
+        // Criação de Cursos
+        // ========================
+        $cursos = [
+            'Sistemas para Internet',
+            'Pedagogia',
+            'Direito',
+            'Processos Gerenciais',
+        ];
+
+        foreach ($cursos as $curso) {
+            Curso::firstOrCreate(['nome' => $curso]);
+        }
     }
 }

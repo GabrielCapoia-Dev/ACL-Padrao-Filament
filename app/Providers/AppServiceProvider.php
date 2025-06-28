@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Curso;
 use App\Models\DominioEmail;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Policies\CursoPolicy;
 use App\Policies\DominioEmailPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
@@ -24,15 +26,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Injetando html direto na tela de login 
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-            fn(): string => <<< 'HTML'
-            <div class='flex justify-end gap-1 text-sm'>
-                <a href="/admin/password-reset" class="text-primary-500">Esqueceu sua senha?</a>
-            </div>
-            HTML
-        );
+        // // Injetando html direto na tela de login 
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+        //     fn(): string => <<< 'HTML'
+        //     <div class='flex justify-end gap-1 text-sm'>
+        //         <a href="/admin/password-reset" class="text-primary-500">Esqueceu sua senha?</a>
+        //     </div>
+        //     HTML
+        // );
     }
 
     /**
@@ -44,5 +46,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(DominioEmail::class, DominioEmailPolicy::class);
+        Gate::policy(Curso::class, CursoPolicy::class);
     }
 }
