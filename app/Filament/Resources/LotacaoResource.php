@@ -120,7 +120,9 @@ class LotacaoResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->headerActions([
-                FilamentExportHeaderAction::make('export'),
+                FilamentExportHeaderAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

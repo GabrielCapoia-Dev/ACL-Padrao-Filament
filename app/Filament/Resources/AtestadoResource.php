@@ -19,7 +19,7 @@ class AtestadoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-plus-circle';
 
-    protected static ?string $navigationGroup = 'Gerenciamento';
+    protected static ?string $navigationGroup = 'Gerenciamento de Servidores';
 
     protected static ?string $modelLabel = 'Afastamento';
 

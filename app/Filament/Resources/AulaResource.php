@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
-use App\Filament\Resources\TipoAtestadoResource\Pages;
-use App\Filament\Resources\TipoAtestadoResource\RelationManagers;
-use App\Models\TipoAtestado;
+use App\Filament\Resources\AulaResource\Pages;
+use App\Filament\Resources\AulaResource\RelationManagers;
+use App\Models\Aula;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,19 +13,19 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TipoAtestadoResource extends Resource
+class AulaResource extends Resource
 {
-    protected static ?string $model = TipoAtestado::class;
+    protected static ?string $model = Aula::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
-    protected static ?string $navigationGroup = 'RH';
+    protected static ?string $navigationGroup = "Gerenciamento Escolar";
 
-    public static ?string $modelLabel = 'Tipo de Atestado';
+    public static ?string $modelLabel = 'Aula';
 
-    public static ?string $pluralModelLabel = 'Tipos de Atestados';
+    public static ?string $pluralModelLabel = 'Aulas';
 
-    public static ?string $slug = 'tipos-atestados';
+    public static ?string $slug = 'aulas';
 
     public static function form(Form $form): Form
     {
@@ -34,8 +33,9 @@ class TipoAtestadoResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nome')
                     ->label('Nome')
-                    ->unique(ignoreRecord: true)
                     ->required(),
+                Forms\Components\TextInput::make('descricao')
+                    ->label('Descrição'),
             ]);
     }
 
@@ -47,11 +47,17 @@ class TipoAtestadoResource extends Resource
                     ->label('Nome')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('descricao')
+                    ->label('Descrição')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -63,11 +69,6 @@ class TipoAtestadoResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->headerActions([
-                FilamentExportHeaderAction::make('export')
-                    ->defaultFormat('pdf')
-                    ->disableAdditionalColumns()
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -78,7 +79,7 @@ class TipoAtestadoResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageTipoAtestados::route('/'),
+            'index' => Pages\ManageAulas::route('/'),
         ];
     }
 }

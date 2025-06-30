@@ -23,7 +23,7 @@ class ServidorResource extends Resource
 
     public static ?string $modelLabel = 'Servidor';
 
-    protected static ?string $navigationGroup = "Gerenciamento";
+    protected static ?string $navigationGroup = "Gerenciamento de Servidores";
 
     public static ?string $pluralModelLabel = 'Servidores';
 
@@ -56,7 +56,9 @@ class ServidorResource extends Resource
                     ->preload()
                     ->relationship('cargo', 'nome')
                     ->getOptionLabelFromRecordUsing(fn($record) => "{$record->nome} - {$record->regimeContratual->nome}")
+                    ->reactive()
                     ->required(),
+
                 Forms\Components\Select::make('turno_id')
                     ->label('Turno')
                     ->preload()
@@ -74,7 +76,22 @@ class ServidorResource extends Resource
                     ->label('Lotação')
                     ->relationship('lotacao', 'nome')
                     ->preload()
-
+                    ->searchable()
+                    ->getSearchResultsUsing(function (string $search) {
+                        return \App\Models\Lotacao::query()
+                            ->where('nome', 'like', "%{$search}%")
+                            ->orWhere('codigo', 'like', "%{$search}%")
+                            ->limit(50)
+                            ->get()
+                            ->pluck('nome', 'id')
+                            ->map(function ($nome, $id) {
+                                $lotacao = \App\Models\Lotacao::find($id);
+                                return "{$lotacao->codigo} - {$lotacao->cargo->nome} {$lotacao->cargo->regimeContratual->nome} |{$lotacao->setor->nome}";
+                            });
+                    })
+                    ->getOptionLabelFromRecordUsing(function ($record) {
+                        return "{$record->codigo} - {$record->cargo->nome} {$record->cargo->regimeContratual->nome} | {$record->setor->nome}";
+                    })
                     ->required(),
 
                 Forms\Components\Section::make('Carga Horária')
@@ -292,7 +309,9 @@ class ServidorResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->headerActions([
-                FilamentExportHeaderAction::make('export'),
+                FilamentExportHeaderAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

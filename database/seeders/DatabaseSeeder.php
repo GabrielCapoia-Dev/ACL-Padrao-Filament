@@ -10,8 +10,10 @@ use App\Models\Turno;
 use App\Models\RegimeContratual;
 use App\Models\Cargo;
 use App\Models\Lotacao;
+use App\Models\NomeTurma;
 use App\Models\Servidor;
 use App\Models\Setor;
+use App\Models\SiglaTurma;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\TipoAtestado;
@@ -191,6 +193,68 @@ class DatabaseSeeder extends Seeder
 
         foreach ($tipos as $nome) {
             TipoAtestado::create([
+                'nome' => $nome,
+            ]);
+        }
+
+        // ========================
+        // Criação de Tipos de NomeTurmas
+        // ========================
+
+        $tipos = [
+            '1º Ano',
+            '2º Ano',
+            '3º Ano',
+            '4º Ano',
+            '5º Ano',
+            'Infantil 4',
+            'Infantil 5',
+            'Maternal I',
+            'Maternal II',
+            'Maternal III',
+        ];
+
+        foreach ($tipos as $nome) {
+            NomeTurma::create([
+                'nome' => $nome,
+            ]);
+        }
+
+        // ========================
+        // Criação de Tipos de SiglaTurmas
+        // ========================
+
+        $tipos = [
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+        ];
+
+        foreach ($tipos as $nome) {
+            SiglaTurma::create([
                 'nome' => $nome,
             ]);
         }

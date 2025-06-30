@@ -155,7 +155,9 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
-                FilamentExportHeaderAction::make('export'),
+                FilamentExportHeaderAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

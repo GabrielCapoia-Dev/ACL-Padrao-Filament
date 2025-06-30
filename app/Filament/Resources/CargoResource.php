@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\CargoResource\Pages;
 use App\Filament\Resources\CargoResource\RelationManagers;
 use App\Models\Cargo;
@@ -53,7 +54,7 @@ class CargoResource extends Resource
                 Tables\Columns\TextColumn::make('regimeContratual.nome')
                     ->sortable()
                     ->label('Regime Contratual')
-                    ->searchable(),    
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Criado em')
                     ->dateTime()
@@ -72,7 +73,11 @@ class CargoResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

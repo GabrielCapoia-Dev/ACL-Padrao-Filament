@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\DeclaracaoDeHoraResource\Pages;
 use App\Filament\Resources\DeclaracaoDeHoraResource\RelationManagers;
 use App\Models\DeclaracaoDeHora;
@@ -20,7 +21,7 @@ class DeclaracaoDeHoraResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Gerenciamento';
+    protected static ?string $navigationGroup = 'Gerenciamento de Servidores';
 
     protected static ?string $modelLabel = 'Declaração de Horas';
 
@@ -107,7 +108,7 @@ class DeclaracaoDeHoraResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('turno.nome')                   
+                Tables\Columns\TextColumn::make('turno.nome')
                     ->label('Periodo')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
@@ -205,6 +206,11 @@ class DeclaracaoDeHoraResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+            ])
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
