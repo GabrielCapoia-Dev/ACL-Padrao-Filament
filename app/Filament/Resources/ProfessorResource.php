@@ -51,9 +51,9 @@ class ProfessorResource extends Resource
                     ->preload()
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn(Get $get, Set $set) => $set('setor_turma_id', null)),
+                    ->afterStateUpdated(fn(Get $get, Set $set) => $set('turma_id', null)),
 
-                Forms\Components\Select::make('setor_turma_id')
+                Forms\Components\Select::make('turma_id')
                     ->label('Turma')
                     ->options(function (Get $get) {
                         $servidorId = $get('servidor_id');
@@ -62,31 +62,27 @@ class ProfessorResource extends Resource
                             return [];
                         }
 
-                        // Busca os setores do servidor
-                        $servidor = Servidor::with('setores')->find($servidorId);
-                        $setorIds = $servidor?->setores->pluck('id') ?? [];
+                        $servidor = \App\Models\Servidor::with('lotacao.setor')->find($servidorId);
+                        $setorId = $servidor?->lotacao?->setor?->id;
 
-                        if ($setorIds->isEmpty()) {
+                        if (!$setorId) {
                             return [];
                         }
 
-                        // Retorna as turmas cujos setor_id estão entre os setores do servidor
-                        return Turma::whereIn('setor_id', $setorIds)
+                        return \App\Models\Turma::where('setor_id', $setorId)
                             ->with(['nomeTurma', 'siglaTurma'])
                             ->get()
                             ->mapWithKeys(fn($turma) => [$turma->id => $turma->nomeCompleto()]);
                     })
                     ->searchable()
                     ->preload()
-                    ->required()
                     ->reactive(),
 
                 Forms\Components\Select::make('aula_id')
                     ->label('Aula')
                     ->relationship('aula', 'nome')
                     ->preload()
-                    ->searchable()
-                    ->required(),
+                    ->searchable(),
             ]);
     }
 
@@ -94,20 +90,52 @@ class ProfessorResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('servidor.lotacao.setor.nome')
+                    ->label('Local de Trabalho')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('servidor.matricula')
+                    ->label('Matricula')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('servidor.nome')
+                    ->label('Nome')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('setorTurma.turma.nome')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('turma_id')
+                    ->label('Turma')
+                    ->formatStateUsing(function ($state, \App\Models\Professor $record) {
+                        return $record->turma?->nomeCompleto();
+                    }),
                 Tables\Columns\TextColumn::make('aula.nome')
+                    ->label('Aula')
                     ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('servidor.cargo.nome')
+                    ->label('Cargo')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('servidor.cargo.regimeContratual.nome')
+                    ->label('Regime Contratual')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('servidor.turno.nome')
+                    ->label('Turno')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

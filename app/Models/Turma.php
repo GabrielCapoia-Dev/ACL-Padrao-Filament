@@ -58,4 +58,9 @@ class Turma extends Model
     {
         return $this->belongsTo(SiglaTurma::class);
     }
+
+    public function professores()
+    {
+        return $this->hasMany(Professor::class);
+    }
 }

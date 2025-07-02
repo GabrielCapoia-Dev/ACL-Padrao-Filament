@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Servidor;
 
 class UserResource extends Resource
 {
@@ -82,7 +83,27 @@ class UserResource extends Resource
 
                 Forms\Components\Toggle::make('email_approved')
                     ->label('Verificação de acesso')
-                    ->default(true)
+                    ->inline(false)
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->onIcon('heroicon-s-check')
+                    ->offIcon('heroicon-s-x-mark')
+                    ->required()
+                    ->default(true),
+
+                Forms\Components\Select::make('servidor_id')
+                    ->label('Servidor vinculado')
+                    ->options(function () {
+                        return Servidor::whereNull('user_id')
+                            ->pluck('nome', 'id');
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->helperText('Só é possível vincular um servidor que ainda não esteja associado a outro usuário.')
+                    ->native(false)
+                    ->visibleOn('create')
+                    ->nullable()
+                    ->columnSpanFull(),
 
             ]);
     }
@@ -98,6 +119,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->label('E-mail')
                     ->searchable(),
+                    
+                Tables\Columns\TextColumn::make('servidor.nome')
+                    ->label('Servidor')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Nivel de acesso')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label('Verificado em')
@@ -115,6 +148,12 @@ class UserResource extends Resource
                 Tables\Columns\ToggleColumn::make('email_approved')
                     ->label('Verificação de Acesso')
                     ->sortable()
+                    ->disabled(function ($record) {
+                        $user = Auth::user();
+
+                        // Desativa o toggle se for o próprio usuário
+                        return $user && $record && $user->id === $record->id;
+                    })
                     ->visible(function () {
                         /** @var \App\Models\User|null $user */
                         $user = Auth::user();
@@ -126,7 +165,13 @@ class UserResource extends Resource
 
                         // Mostra só para Admin
                         return $user->hasRole('Admin');
-                    }),
+                    })
+                    ->inline(false)
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->onIcon('heroicon-s-check')
+                    ->offIcon('heroicon-s-x-mark')
+                    ->columnSpan(1),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Criado em')
@@ -138,12 +183,6 @@ class UserResource extends Resource
                     ->label('Atualizado em')
                     ->since()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Nivel de acesso')
-                    ->sortable()
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
 

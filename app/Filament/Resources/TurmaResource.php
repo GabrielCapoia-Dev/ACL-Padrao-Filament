@@ -38,7 +38,7 @@ class TurmaResource extends Resource
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('sigla_turma_id')
-                    ->label('Nome')
+                    ->label('Sigla')
                     ->relationship('siglaTurma', 'nome')
                     ->preload()
                     ->required(),

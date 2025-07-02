@@ -26,11 +26,13 @@ class Servidor extends Model
      */
     protected $fillable = [
         'matricula',
+        'data_admissao',
         'nome',
         'email',
         'cargo_id',
         'turno_id',
         'lotacao_id',
+        'user_id',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -38,14 +40,20 @@ class Servidor extends Model
         return LogOptions::defaults()
             ->logOnly([
                 'matricula',
+                'data_admissao',
                 'nome',
                 'email',
                 'cargo_id',
                 'turno_id',
                 'lotacao_id',
+                'user_id',
             ]);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function cargo()
     {
@@ -75,5 +83,10 @@ class Servidor extends Model
     public function atestados()
     {
         return $this->hasMany(Atestado::class);
+    }
+
+    public function professor()
+    {
+        return $this->hasOne(Professor::class);
     }
 }

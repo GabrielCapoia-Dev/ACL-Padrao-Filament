@@ -272,6 +272,7 @@ class DatabaseSeeder extends Seeder
                 'cargo_id' => Cargo::inRandomOrder()->first()->id,
                 'turno_id' => Turno::inRandomOrder()->first()->id,
                 'lotacao_id' => collect($lotacoes)->random()->id,
+                'data_admissao' => fake()->date('Y-m-d', '-10 years'),
             ]);
 
             // Vincular o servidor a 1 a 3 setores aleatórios

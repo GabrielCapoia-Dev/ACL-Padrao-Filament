@@ -36,11 +36,16 @@ class Professor extends Model
 
     public function servidor()
     {
-        return $this->belongsTo(Servidor::class);
+        return $this->belongsTo(Servidor::class, 'servidor_id', 'id');
     }
 
     public function aula()
     {
         return $this->belongsTo(Aula::class);
+    }
+
+    public function turma()
+    {
+        return $this->belongsTo(Turma::class);
     }
 }

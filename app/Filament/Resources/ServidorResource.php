@@ -12,6 +12,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use Carbon\Carbon;
 
 use Filament\Tables\Actions\Action;
 
@@ -94,6 +95,10 @@ class ServidorResource extends Resource
                     })
                     ->required(),
 
+                Forms\Components\DatePicker::make('data_admissao')
+                    ->label('Data de Admissão')
+                    ->required(),
+
                 Forms\Components\Section::make('Carga Horária')
                     ->schema([
                         Forms\Components\Group::make()
@@ -132,7 +137,7 @@ class ServidorResource extends Resource
         return $table
             ->paginated([10, 25, 50, 100])
             ->columns([
-                Tables\Columns\TextColumn::make('setores')
+                Tables\Columns\TextColumn::make('setor_id')
                     ->label('Local de Trabalho')
                     ->getStateUsing(
                         fn($record) =>
@@ -214,6 +219,13 @@ class ServidorResource extends Resource
                     })
                     ->wrap()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('data_admissao')
+                    ->label('Data de Admissão')
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->format('d/m/Y'))
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Criado em')
@@ -301,9 +313,6 @@ class ServidorResource extends Resource
                         });
                     }),
             ])
-
-
-
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
